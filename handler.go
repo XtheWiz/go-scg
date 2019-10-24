@@ -101,6 +101,8 @@ func FoodHandler(c *gin.Context) {
 	foodType := c.Query("foodType")
 	foodType = strings.TrimSpace(foodType)
 
+	fmt.Println("Food Type: " + foodType)
+
 	baseURL := "https://maps.googleapis.com"
 	relativeURL := "/maps/api/place/nearbysearch/json"
 	url, _ := url.Parse(baseURL)
