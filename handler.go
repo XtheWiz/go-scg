@@ -115,7 +115,7 @@ func FoodHandler(c *gin.Context) {
 	queryString.Set("type", "food")
 	queryString.Set("language", "th")
 	if len(foodType) > 0 {
-		queryString.Set("keyword", foodType)
+		queryString.Add("keyword", foodType)
 	}
 	queryString.Set("key", apiKey)
 	url.RawQuery = queryString.Encode()
@@ -128,18 +128,28 @@ func FoodHandler(c *gin.Context) {
 	}
 	defer resp.Body.Close()
 
+	// bs := make([]byte, 999999)
+	// resp.Body.Read(bs)
+	// fmt.Println(string(bs))
+
 	placeResp := new(PlacesSearchResponse)
 	json.NewDecoder(resp.Body).Decode(placeResp)
-	pretty.Println(placeResp)
-	// fmt.Println("Found total: ", len(placeResp.Results))
 
-	if placeResp.Status != "OK" ||
-		len(placeResp.Results) == 0 {
-		c.JSON(http.StatusOK, gin.H{
-			"status":   placeResp.Status,
-			"foodlist": placeResp.Results,
-		})
-	} else {
+	// var placeResp PlacesSearchResponse
+	// parseErr := c.ShouldBindJSON(&placeResp)
+
+	// if parseErr != nil {
+	// 	c.JSON(http.StatusInternalServerError, gin.H{
+	// 		"error": err.Error(),
+	// 	})
+	// 	return
+	// }
+
+	pretty.Println(placeResp)
+	fmt.Println("Found total: ", len(placeResp.Results))
+	fmt.Println("Status: ", placeResp.Status)
+
+	if placeResp.Status == "OK" {
 		placeResultReturn := []ReturnPlaceResult{}
 		for _, place := range placeResp.Results {
 			p := ReturnPlaceResult{}
@@ -159,5 +169,38 @@ func FoodHandler(c *gin.Context) {
 			"status":   placeResp.Status,
 			"foodlist": placeResultReturn,
 		})
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"status":   placeResp.Status,
+			"foodlist": placeResp.Results,
+		})
 	}
+
+	// if placeResp.Status != "OK" ||
+	// 	len(placeResp.Results) == 0 {
+	// 	c.JSON(http.StatusOK, gin.H{
+	// 		"status":   placeResp.Status,
+	// 		"foodlist": placeResp.Results,
+	// 	})
+	// } else {
+	// 	placeResultReturn := []ReturnPlaceResult{}
+	// 	for _, place := range placeResp.Results {
+	// 		p := ReturnPlaceResult{}
+	// 		p.Name = place.Name
+	// 		if len(place.Photos) > 0 {
+	// 			p.PhotoRef = place.Photos[0].PhotoReference
+	// 		}
+	// 		p.Lat = place.Geometry.Location.Lat
+	// 		p.Lng = place.Geometry.Location.Lng
+	// 		p.Vicinity = place.Vicinity
+	// 		p.Distance = p.findDistance()
+
+	// 		placeResultReturn = append(placeResultReturn, p)
+	// 	}
+
+	// 	c.JSON(http.StatusOK, gin.H{
+	// 		"status":   placeResp.Status,
+	// 		"foodlist": placeResultReturn,
+	// 	})
+	// }
 }
