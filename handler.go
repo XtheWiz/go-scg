@@ -14,7 +14,7 @@ import (
 )
 
 const imgURL = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=350&photoreference="
-const apiKey = "YOUR_API_KEY"
+const apiKey = "AIzaSyCTcUNlcIIeUJWgJTpcFipoqqDM1rXX-2Y"
 
 func PuzzleHandler(c *gin.Context) {
 	c.Header("Content-Type", "application/json")
