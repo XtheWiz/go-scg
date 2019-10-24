@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/kr/pretty"
 )
 
 const imgURL = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=350&photoreference="
@@ -129,7 +130,7 @@ func FoodHandler(c *gin.Context) {
 
 	placeResp := new(PlacesSearchResponse)
 	json.NewDecoder(resp.Body).Decode(placeResp)
-	// pretty.Println(placeResp)
+	pretty.Println(placeResp)
 	// fmt.Println("Found total: ", len(placeResp.Results))
 
 	if placeResp.Status != "OK" ||
