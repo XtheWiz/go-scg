@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"os"
 	"time"
 
 	"github.com/gin-contrib/cache"
@@ -32,5 +34,15 @@ func main() {
 		api.GET("/food", cache.CachePage(store, time.Hour, FoodHandler))
 	}
 
-	r.Run(":3111")
+	r.Run(getPort())
+}
+
+func getPort() string {
+	var port = os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+		fmt.Println("No port in Heroku")
+	}
+
+	return ":" + port
 }
