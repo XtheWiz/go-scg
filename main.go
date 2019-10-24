@@ -3,6 +3,8 @@ package main
 import (
 	"time"
 
+	"github.com/gin-contrib/cache"
+	"github.com/gin-contrib/cache/persistence"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
@@ -22,10 +24,12 @@ func main() {
 		MaxAge: 12 * time.Hour,
 	}))
 
+	store := persistence.NewInMemoryStore(time.Hour)
+
 	api := r.Group("/scg")
 	{
-		api.GET("/puzzle", PuzzleHandler)
-		api.GET("/food", FoodHandler)
+		api.GET("/puzzle", cache.CachePage(store, time.Hour, PuzzleHandler))
+		api.GET("/food", cache.CachePage(store, time.Hour, FoodHandler))
 	}
 
 	r.Run(":3111")
