@@ -106,44 +106,33 @@ func FoodHandler(c *gin.Context) {
 
 	baseURL := "https://maps.googleapis.com"
 	relativeURL := "/maps/api/place/nearbysearch/json"
-	url, _ := url.Parse(baseURL)
-	url.Path = path.Join(url.Path, relativeURL, "/")
+	destURL, _ := url.Parse(baseURL)
+	destURL.Path = path.Join(destURL.Path, relativeURL, "/")
 
-	queryString := url.Query()
+	queryString := destURL.Query()
 	queryString.Set("location", "13.8035134,100.5373821")
 	queryString.Set("radius", "5000")
 	queryString.Set("type", "food")
 	queryString.Set("language", "th")
 	if len(foodType) > 0 {
-		queryString.Add("keyword", foodType)
+		decodedValue, err := url.QueryUnescape(foodType)
+		if err == nil {
+			queryString.Add("keyword", decodedValue)
+		}
 	}
 	queryString.Set("key", apiKey)
-	url.RawQuery = queryString.Encode()
+	destURL.RawQuery = queryString.Encode()
 
-	fmt.Println("URL = " + url.String())
+	fmt.Println("URL = " + destURL.String())
 
-	resp, err := http.Get(url.String())
+	resp, err := http.Get(destURL.String())
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer resp.Body.Close()
 
-	// bs := make([]byte, 999999)
-	// resp.Body.Read(bs)
-	// fmt.Println(string(bs))
-
 	placeResp := new(PlacesSearchResponse)
 	json.NewDecoder(resp.Body).Decode(placeResp)
-
-	// var placeResp PlacesSearchResponse
-	// parseErr := c.ShouldBindJSON(&placeResp)
-
-	// if parseErr != nil {
-	// 	c.JSON(http.StatusInternalServerError, gin.H{
-	// 		"error": err.Error(),
-	// 	})
-	// 	return
-	// }
 
 	pretty.Println(placeResp)
 	fmt.Println("Found total: ", len(placeResp.Results))
@@ -175,32 +164,4 @@ func FoodHandler(c *gin.Context) {
 			"foodlist": placeResp.Results,
 		})
 	}
-
-	// if placeResp.Status != "OK" ||
-	// 	len(placeResp.Results) == 0 {
-	// 	c.JSON(http.StatusOK, gin.H{
-	// 		"status":   placeResp.Status,
-	// 		"foodlist": placeResp.Results,
-	// 	})
-	// } else {
-	// 	placeResultReturn := []ReturnPlaceResult{}
-	// 	for _, place := range placeResp.Results {
-	// 		p := ReturnPlaceResult{}
-	// 		p.Name = place.Name
-	// 		if len(place.Photos) > 0 {
-	// 			p.PhotoRef = place.Photos[0].PhotoReference
-	// 		}
-	// 		p.Lat = place.Geometry.Location.Lat
-	// 		p.Lng = place.Geometry.Location.Lng
-	// 		p.Vicinity = place.Vicinity
-	// 		p.Distance = p.findDistance()
-
-	// 		placeResultReturn = append(placeResultReturn, p)
-	// 	}
-
-	// 	c.JSON(http.StatusOK, gin.H{
-	// 		"status":   placeResp.Status,
-	// 		"foodlist": placeResultReturn,
-	// 	})
-	// }
 }

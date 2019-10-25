@@ -26,12 +26,12 @@ func main() {
 		MaxAge: 12 * time.Hour,
 	}))
 
-	store := persistence.NewInMemoryStore(time.Hour)
+	store := persistence.NewInMemoryStore(time.Second)
 
 	api := r.Group("/scg")
 	{
-		api.GET("/puzzle", cache.CachePage(store, time.Hour, PuzzleHandler))
-		api.GET("/food", cache.CachePage(store, time.Hour, FoodHandler))
+		api.GET("/puzzle", cache.CachePage(store, time.Minute, PuzzleHandler))
+		api.GET("/food", cache.CachePage(store, time.Minute, FoodHandler))
 	}
 
 	r.Run(getPort())
