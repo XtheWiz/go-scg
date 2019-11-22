@@ -15,26 +15,7 @@ import (
 	"github.com/kr/pretty"
 )
 
-// FoodHandler will receive query string foodType as optional
-// Query String:
-//		foodType (optional): Specify type of food for place api
-// Return:
-//		status: 	status return from place api
-//		foodlist: list is restaurant return from place api
-func FoodHandler(c *gin.Context) {
-	config := config.LoadConfig("configs/config.yml")
-	c.Header("Content-Type", "application/json")
-
-	foodType := c.Query("foodType")
-	foodType = strings.TrimSpace(foodType)
-
-	fmt.Println("Food Type: " + foodType)
-
-	baseURL := "https://maps.googleapis.com"
-	relativeURL := "/maps/api/place/nearbysearch/json"
-	destURL, _ := url.Parse(baseURL)
-	destURL.Path = path.Join(destURL.Path, relativeURL, "/")
-
+func prepareQueryString(destURL *url.URL, cf model.Config, foodType string) string {
 	queryString := destURL.Query()
 	queryString.Set("location", "13.8035134,100.5373821")
 	queryString.Set("radius", "5000")
@@ -46,9 +27,36 @@ func FoodHandler(c *gin.Context) {
 			queryString.Add("keyword", decodedValue)
 		}
 	}
-	queryString.Set("key", config.PlaceApiKey)
-	destURL.RawQuery = queryString.Encode()
+	queryString.Set("key", cf.PlaceApiKey)
 
+	return queryString.Encode()
+}
+
+func printPlaceResult(resp *model.PlacesSearchResponse) {
+	pretty.Println(resp)
+	fmt.Println("Found total: ", len(resp.Results))
+	fmt.Println("Status: ", resp.Status)
+}
+
+// FoodHandler will receive query string foodType as optional
+// Query String:
+//		foodType (optional): Specify type of food for place api
+// Return:
+//		status: 	status return from place api
+//		foodlist: list is restaurant return from place api
+func FoodHandler(c *gin.Context) {
+	config, _ := config.LoadConfig("configs/config.yml")
+	c.Header("Content-Type", "application/json")
+
+	foodType := c.Query(config.ParamFoodType)
+	foodType = strings.TrimSpace(foodType)
+	fmt.Println("Food Type: " + foodType)
+
+	baseURL := config.PlaceBaseUrl
+	relativeURL := config.PlaceRelativeUrl
+	destURL, _ := url.Parse(baseURL)
+	destURL.Path = path.Join(destURL.Path, relativeURL, "/")
+	destURL.RawQuery = prepareQueryString(destURL, config, foodType)
 	fmt.Println("URL = " + destURL.String())
 
 	resp, err := http.Get(destURL.String())
@@ -60,9 +68,7 @@ func FoodHandler(c *gin.Context) {
 	placeResp := new(model.PlacesSearchResponse)
 	json.NewDecoder(resp.Body).Decode(placeResp)
 
-	pretty.Println(placeResp)
-	fmt.Println("Found total: ", len(placeResp.Results))
-	fmt.Println("Status: ", placeResp.Status)
+	printPlaceResult(placeResp)
 
 	if placeResp.Status == "OK" {
 		placeResultReturn := []model.ReturnPlaceResult{}

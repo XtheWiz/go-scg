@@ -2,3 +2,6 @@ imgUrlPrefix: https://maps.googleapis.com/maps/api/place/photo?maxwidth=350&phot
 placeApiKey: AIzaSyB7nzO9lG7XujY73JAQC4BHG6DM89VV3ww
 bangsueLat: 13.8035134
 bangsueLng: 100.5373821
+paramFoodType: foodType
+placeBaseUrl: https://maps.googleapis.com
+placeRelativeUrl: /maps/api/place/nearbysearch/json

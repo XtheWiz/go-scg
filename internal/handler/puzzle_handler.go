@@ -22,7 +22,7 @@ func getValueFromPosition(c *gin.Context, position string) int {
 }
 
 func isValidSequence(var1, var2, var3, var4 int) bool {
-	return (var2-var1 != 4) && (var3-var2 != 6) && (var4-var3 != 8)
+	return (var2-var1 == 4) && (var3-var2 == 6) && (var4-var3 == 8)
 }
 
 func returnCorrectVariables(var1, var4 int) (x, y, z int) {
