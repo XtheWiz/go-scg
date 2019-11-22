@@ -1,2 +1,4 @@
 imgUrlPrefix: https://maps.googleapis.com/maps/api/place/photo?maxwidth=350&photoreference=
-apiKey: AIzaSyB7nzO9lG7XujY73JAQC4BHG6DM89VV3ww
+placeApiKey: AIzaSyB7nzO9lG7XujY73JAQC4BHG6DM89VV3ww
+bangsueLat: 13.8035134
+bangsueLng: 100.5373821

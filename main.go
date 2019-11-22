@@ -5,8 +5,7 @@ import (
 	"os"
 	"time"
 
-	"go-scg/internal/handler/puzzle"
-	"go-scg/internal/handler/food"
+	"go-scg/internal/handler"
 
 	"github.com/gin-contrib/cache"
 	"github.com/gin-contrib/cache/persistence"
@@ -23,8 +22,8 @@ func main() {
 
 	api := r.Group("/scg")
 	{
-		api.GET("/puzzle", cache.CachePage(store, time.Minute, PuzzleHandler))
-		api.GET("/food", cache.CachePage(store, time.Minute, FoodHandler))
+		api.GET("/puzzle", cache.CachePage(store, time.Minute, handler.PuzzleHandler))
+		api.GET("/food", cache.CachePage(store, time.Minute, handler.FoodHandler))
 	}
 
 	r.Run(getPort())

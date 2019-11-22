@@ -1,4 +1,4 @@
-package puzzle
+package handler
 
 import (
 	"fmt"
@@ -37,10 +37,10 @@ func returnCorrectVariables(var1, var4 int) (x, y, z int) {
 // if there is no value or parse to int error, the handler will return error
 // if the sequence is invalid, the handler will return error
 // Query String:
-//		var1: number
-//		var2: number
-//		var3: number
-//		var4: number
+//		var1: first input number in the sequence
+//		var2: second input number in the sequence
+//		var3: third input number in the sequence
+//		var4: fourth input number in the sequence
 // Return:
 //		isSequence: flag to tell that this number sequence is valid or not
 //		message: additional message

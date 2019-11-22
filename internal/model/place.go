@@ -145,10 +145,10 @@ func degrees2radians(degrees float64) float64 {
 	return degrees * math.Pi / 180
 }
 
-//findDistance : Assume we are at
+//FindDistance : Assume we are at
 //Lat = 13.8035134
 //Lng = 100.5373821
-func (dest ReturnPlaceResult) findDistance() float64 {
+func (dest ReturnPlaceResult) FindDistance(fromLat, fromLng float64) float64 {
 	degreesLat := degrees2radians(dest.Lat - 13.8035134)
 	degreesLong := degrees2radians(dest.Lng - 100.5373821)
 	a := (math.Sin(degreesLat/2)*math.Sin(degreesLat/2) +
