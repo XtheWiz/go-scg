@@ -5,6 +5,9 @@ import (
 	"os"
 	"time"
 
+	"go-scg/internal/handler/puzzle"
+	"go-scg/internal/handler/food"
+
 	"github.com/gin-contrib/cache"
 	"github.com/gin-contrib/cache/persistence"
 	"github.com/gin-contrib/cors"
@@ -14,18 +17,8 @@ import (
 func main() {
 	r := gin.Default()
 
-	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"},
-		AllowMethods:     []string{"GET", "POST"},
-		AllowHeaders:     []string{"Origin"},
-		ExposeHeaders:    []string{"Content-Length"},
-		AllowCredentials: true,
-		AllowOriginFunc: func(origin string) bool {
-			return origin == "https://github.com"
-		},
-		MaxAge: 12 * time.Hour,
-	}))
-
+	//For test, allow all origin
+	r.Use(cors.Default())
 	store := persistence.NewInMemoryStore(time.Second)
 
 	api := r.Group("/scg")
@@ -41,7 +34,7 @@ func getPort() string {
 	var port = os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
-		fmt.Println("No port in Heroku")
+		fmt.Println("No port in environment variable")
 	}
 
 	return ":" + port
